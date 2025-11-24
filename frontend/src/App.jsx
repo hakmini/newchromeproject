@@ -58,7 +58,7 @@ function App() {
     // 2️⃣ WebSocket(spring server) 연결
     useEffect(() => {
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("http://localhost:8080/coinprice"),//웹소켓 연결은 스프링서버를 통해 연결
+            webSocketFactory: () => new SockJS("https://newchromeproject.onrender.com/coinprice"),//웹소켓 연결은 스프링서버(render)를 통해 연결
             reconnectDelay: 5000, //delay 5초 설정
             onConnect: () => { //연결 뒤 로직을 담당하는 콜백함수
                 stompClient.subscribe("/topic/upbit", (message) => { //message는 서버가 클라이언트에게 전송한 STOMP 메시지 객체
