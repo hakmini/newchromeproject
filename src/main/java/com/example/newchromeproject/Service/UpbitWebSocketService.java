@@ -29,6 +29,8 @@ public class UpbitWebSocketService {
     private final UpbitRestService restService;
     private  Map<String, MarketDto> marketMap; //단 내부에서 초기화 되는 값은 일반 필드로 설정하기
 
+
+
     @PostConstruct // bean의 의존성 주입이 끝난 직후 자동 실행되는 초기화 로직(서버 실행 시 딱 1번만 실행되면 됨)
     public void readyToWebSocket() {
 
@@ -42,16 +44,6 @@ public class UpbitWebSocketService {
             this.marketMap = markets.stream() //marketMap은 전역변수이므로 this 꼭 사용
                     .collect(Collectors.toMap(m -> m.getMarket(), m -> m)); //MarketDto :: getMarket - 맵의 키값을 market로 사용하겠다.
                                                                               // m -> m - 맵의 value값은 dto로 사용하겠다.
-            /*
-            //콘솔 테스트
-            System.out.println("총 마켓 수: " + markets.size());
-            markets.stream()
-                    .limit(3)
-                    .forEach(m ->
-                            System.out.println(m.getMarket() + " | "
-                                    + m.getKorean_name() + " | "
-                                    + m.getEnglish_name())
-                    );*/
 
         } catch (Exception e) {
             System.err.println("마켓 정보 가져오기 실패: " + e.getMessage());
@@ -59,6 +51,9 @@ public class UpbitWebSocketService {
 
         startToWebSocket();
     }
+
+
+
 
         private void startToWebSocket() {
             Request request = new Request.Builder()
@@ -147,23 +142,6 @@ public class UpbitWebSocketService {
             public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
                 // 서버가 연결 닫을 때
             }
-
-
         });
-
-
-
     }
-
-
-
-
-    /*
-    @Autowired  //  messagingTemplate Bean 생성자 주입 //@RequiredArgsConstructor이 자동으로 생성해줌.(메모리를 줄여봤음)
-    public UpbitWebSocketService(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
-    }
-*/
-
-
 }

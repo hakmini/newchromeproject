@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Upbit RealTime Viewer",
+  "name": "Choco",
   "version": "1.0.0",
   "description": "업비트 실시간 시세 뷰어",
 
@@ -22,7 +22,7 @@
   "commands": {
     "toggle_popup": {
       "suggested_key": {
-        "default": "Ctrl+P"
+        "default": "Ctrl+X"
       },
       "description": "Popup 열기/닫기"
     }
