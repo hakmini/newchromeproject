@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Choco",
-  "version": "1.0.0",
-  "description": "업비트 실시간 시세 뷰어",
+  "name": "Choco - 코인의 실시간 시세를 빠르게 확인하세요!",
+  "version": "1.0.1",
+  "description": "초단위 코인 시세 뷰어 초코(Choco)입니다!",
 
   "action": {
     "default_popup": "index.html",
@@ -15,20 +15,24 @@
     "128": "128.png"
   },
 
-  "background": {
-    "service_worker": "background.js"
-  },
 
   "commands": {
     "toggle_popup": {
       "suggested_key": {
-        "default": "Ctrl+X"
+        "default": "Alt+Shift+Y",
+        "mac": "Command+Shift+Y"
       },
       "description": "Popup 열기/닫기"
     }
   },
 
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "permissions": ["windows"],
+
   "host_permissions": [
-    "https://newchromeproject.onrender.com/*"
+    "http://3.34.28.81:8080/*"
   ]
 }

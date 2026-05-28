@@ -1,21 +1,29 @@
+let popupWindowId = null;
+
 chrome.commands.onCommand.addListener(async (command) => {
-    if (command === "toggle_popup") {
-        const views = chrome.extension.getViews({ type: "popup" });
+    console.log("Command executed:", command);
 
-        if (views.length > 0) {
-            // 이미 popup이 열려 있다면 닫기
-            chrome.action.setPopup({ popup: "" });
+    if (command !== "toggle-window") return;
 
-            // popup 창을 닫기 위해 아이콘을 한번 토글
-            chrome.action.openPopup().catch(() => {});
-            return;
-        }
-
-        // popup이 닫혀 있다면 열기
+    // 이미 창이 열려 있으면 닫기
+    if (popupWindowId !== null) {
         try {
-            await chrome.action.openPopup();
+            await chrome.windows.remove(popupWindowId);
         } catch (e) {
-            console.error("Failed to open popup:", e);
+            console.log("Window already closed");
         }
+        popupWindowId = null;
+        return;
     }
+
+    // 새 창 생성
+    const win = await chrome.windows.create({
+        url: "index.html",
+        type: "popup",
+        width: 380,
+        height: 570,
+        focused: true
+    });
+
+    popupWindowId = win.id;
 });
