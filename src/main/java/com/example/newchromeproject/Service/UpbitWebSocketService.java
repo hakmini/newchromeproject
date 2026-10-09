@@ -1,5 +1,6 @@
 package com.example.newchromeproject.Service;
 
+import com.example.newchromeproject.dto.FirstTickerDto;
 import com.example.newchromeproject.dto.MarketDto;
 //import com.example.newchromeproject.Service.UpbitRestService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,6 +28,7 @@ public class UpbitWebSocketService {
     private final ObjectMapper socket_mapper = new ObjectMapper();
     private final SimpMessagingTemplate messagingTemplate;
     private final UpbitRestService restService;
+    private final TickerSnapshotService snapshotService;
     private  Map<String, MarketDto> marketMap; //단 내부에서 초기화 되는 값은 일반 필드로 설정하기
 
 
@@ -47,6 +49,13 @@ public class UpbitWebSocketService {
 
         } catch (Exception e) {
             System.err.println("마켓 정보 가져오기 실패: " + e.getMessage());
+        }
+
+        //스냅샷 초기값 채우기(서버 시작 시 1번만 REST 호출, 이후에는 웹소켓 데이터로 갱신)
+        try {
+            snapshotService.init(restService.getMergeTickersAndMarkets());
+        } catch (Exception e) {
+            System.err.println("초기 시세 스냅샷 생성 실패: " + e.getMessage());
         }
 
         startToWebSocket();
@@ -114,6 +123,16 @@ public class UpbitWebSocketService {
                         );
 
                         messagingTemplate.convertAndSend("/topic/upbit", message);
+
+                        snapshotService.update(FirstTickerDto.builder() // 스냅샷 갱신 - 초기 시세 API(/api/first-tickers)가 항상 최신값을 주도록
+                                .code(code)
+                                .koreanName(final_match.getKorean_name())
+                                .englishName(final_match.getEnglish_name())
+                                .tradePrice(tradePrice)
+                                .changeState(changeState)
+                                .changeRate(node.get("signed_change_rate").asDouble() * 100) // REST 응답과 동일하게 부호 있는 등락률 사용
+                                .accTradePrice(accTradePrice)
+                                .build());
 
                         System.out.printf("[%s] %s | 현재가: %.0f | 전일대비: %+.0f원 (%.2f%%, %s) | 거래대금(24h): %.0f%n", // 로깅용 코드
                                 code,
